@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'flutter_native_html_to_pdf_method_channel.dart';
@@ -8,7 +10,8 @@ abstract class FlutterNativeHtmlToPdfPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static FlutterNativeHtmlToPdfPlatform _instance = MethodChannelFlutterNativeHtmlToPdf();
+  static FlutterNativeHtmlToPdfPlatform _instance =
+      MethodChannelFlutterNativeHtmlToPdf();
 
   /// The default instance of [FlutterNativeHtmlToPdfPlatform] to use.
   ///
@@ -25,5 +28,12 @@ abstract class FlutterNativeHtmlToPdfPlatform extends PlatformInterface {
 
   Future<String?> getPlatformVersion() {
     throw UnimplementedError('platformVersion() has not been implemented.');
+  }
+
+  Future<File?> convertHtmlToPdf({
+    required String html,
+ required String targetDirectory, required String targetName
+  }) {
+    throw UnimplementedError('convertHtmlToPdf() has not been implemented.');
   }
 }
