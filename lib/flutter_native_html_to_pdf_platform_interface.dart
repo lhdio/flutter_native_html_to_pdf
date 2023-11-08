@@ -26,9 +26,6 @@ abstract class FlutterNativeHtmlToPdfPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> getPlatformVersion() {
-    throw UnimplementedError('platformVersion() has not been implemented.');
-  }
 
   Future<File?> convertHtmlToPdf({
     required String html,

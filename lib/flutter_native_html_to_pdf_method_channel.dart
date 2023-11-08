@@ -14,23 +14,22 @@ class MethodChannelFlutterNativeHtmlToPdf
   final methodChannel = const MethodChannel('flutter_native_html_to_pdf');
 
   @override
-  Future<String?> getPlatformVersion() async {
-    final version =
-        await methodChannel.invokeMethod<String>('getPlatformVersion');
-    return version;
-  }
-
-  @override
   Future<File?> convertHtmlToPdf({
     required String html,
- required String targetDirectory, required String targetName
+    required String targetDirectory,
+    required String targetName,
   }) async {
     final temporaryCreatedHtmlFile =
-        await FileUtils.createFileWithStringContent(html, "$targetDirectory/$targetName.html");
-    final generatedPdfFilePath =
-        await _convertFromHtmlFilePath(temporaryCreatedHtmlFile.path);
-    final generatedPdfFile =
-        FileUtils.copyAndDeleteOriginalFile(generatedPdfFilePath, targetDirectory,targetName);
+        await FileUtils.createFileWithStringContent(
+            html, "$targetDirectory/$targetName.html");
+    final generatedPdfFilePath = await _convertFromHtmlFilePath(
+      temporaryCreatedHtmlFile.path,
+    );
+    final generatedPdfFile = FileUtils.copyAndDeleteOriginalFile(
+      generatedPdfFilePath,
+      targetDirectory,
+      targetName,
+    );
     temporaryCreatedHtmlFile.delete();
 
     return generatedPdfFile;
