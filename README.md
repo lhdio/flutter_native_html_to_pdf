@@ -1,15 +1,24 @@
-# flutter_native_html_to_pdf
+# Flutter Native HTML to PDF
 
-A new Flutter project.
+This is a Flutter application that demonstrates the use of the `flutter_native_html_to_pdf` package to convert HTML content into a PDF file. The generated PDF file can then be shared using the `share_plus` package.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+- **HTML to PDF Conversion**: The application converts a predefined HTML content into a PDF file using the `flutter_native_html_to_pdf` package.
+- **PDF Sharing**: The generated PDF file can be shared using the `share_plus` package.
 
-For help getting started with Flutter development, view the
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## How to Use
 
+1. Run the application: `flutter run`
+2. Once the application is running, you will see a button labeled "Share PDF" on the screen.
+3. Click on the "Share PDF" button to generate the PDF from the HTML content and initiate the sharing.
+
+## Dependencies
+
+- flutter_native_html_to_pdf
+- path_provider
+- share_plus
+
+## Note
+
+This application is a demonstration of the `flutter_native_html_to_pdf` package. The HTML content used in this application is a simple static HTML page. You can replace it with your own dynamic HTML content as needed.
