@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
+  htmltopdfwidgets: ^0.0.9+1
 
 dev_dependencies:
   flutter_test:
@@ -41,6 +42,8 @@ flutter:
       ios:
         pluginClass: FlutterNativeHtmlToPdfPlugin
       linux:
+        pluginClass: FlutterNativeHtmlToPdfPlugin
+      windows:
         pluginClass: FlutterNativeHtmlToPdfPlugin
 
   # To add assets to your plugin package, add an assets section, like this:

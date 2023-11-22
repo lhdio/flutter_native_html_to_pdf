@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_native_html_to_pdf/flutter_native_specific.dart';
 
 import 'file_utils.dart';
 import 'flutter_native_html_to_pdf_platform_interface.dart';
@@ -12,6 +13,7 @@ class MethodChannelFlutterNativeHtmlToPdf
   /// The method channel used to interact with the native platform.
   @visibleForTesting
   final methodChannel = const MethodChannel('flutter_native_html_to_pdf');
+  final nativeSpecific = FlutterNativeSpecific();
 
   @override
   Future<File?> convertHtmlToPdf({
@@ -19,6 +21,13 @@ class MethodChannelFlutterNativeHtmlToPdf
     required String targetDirectory,
     required String targetName,
   }) async {
+    if (Platform.isWindows || Platform.isLinux || Platform.isFuchsia) {
+      return await nativeSpecific.convert(
+        html: html,
+        targetDirectory: targetDirectory,
+        targetName: targetName,
+      );
+    }
     final temporaryCreatedHtmlFile =
         await FileUtils.createFileWithStringContent(
             html, "$targetDirectory/$targetName.html");

@@ -28,7 +28,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     generateExampleDocument();
   }
-
   Future<void> generateExampleDocument() async {
     const htmlContent = """
    <!DOCTYPE html>
