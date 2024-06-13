@@ -38,12 +38,8 @@ class HtmlToPdfConverter {
         val path = applicationContext.filesDir
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 
-            val attributes = PrintAttributes.Builder()
-                .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
-                .setResolution(PrintAttributes.Resolution("pdf", "pdf", 600, 600))
-                .setMinMargins(PrintAttributes.Margins.NO_MARGINS).build()
-
-            val printer = PdfPrinter(attributes)
+            // إزالة PrintAttributes
+            val printer = PdfPrinter(PrintAttributes.Builder().build())  
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 val adapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
