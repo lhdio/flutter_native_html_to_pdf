@@ -76,16 +76,4 @@ class HtmlToPdfConverter {
         const val temporaryDocumentName = "TemporaryDocumentName"
         const val temporaryFileName = "TemporaryDocumentFile.pdf"
     }
-
-    private inner class LayoutResultCallback : PrintDocumentAdapter.LayoutResultCallback() {
-        override fun onLayoutFinished(info: PrintDocumentInfo?, changed: Boolean) {
-            // Handle layout finished
-        }
-    }
-
-    private inner class WriteResultCallback : PrintDocumentAdapter.WriteResultCallback() {
-        override fun onWriteFinished(pages: Array<PageRange>?) {
-            // Handle write finished
-        }
-    }
 }
