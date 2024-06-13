@@ -56,11 +56,12 @@ fun createPdfFromWebView(webView: WebView, applicationContext: Context, callback
 
         val printJob = printManager.print(temporaryDocumentName, printAdapter, pdfPrintAttrs)
 
-        printJob.setCompleted(object : android.print.PrintJob.PrintJobStateChangeListener() {
-            override fun onPrintJobStateChanged(printJob: android.print.PrintJob) {
-                when (printJob.info.state) {
+        printJob.addPrintJobStateChangeListener(object : android.print.PrintJobStateChangeListener() {
+            override fun onPrintJobStateChanged(printJobId: android.print.PrintJobId) {
+                val job = printManager.getPrintJob(printJobId)
+                when (job?.info?.state) {
                     android.print.PrintJobInfo.STATE_COMPLETED -> {
-                        val filePath = "${path.absolutePath}/${printJob.info.label}"
+                        val filePath = "${path.absolutePath}/${job.info.label}"
                         callback.onSuccess(filePath)
                     }
                     android.print.PrintJobInfo.STATE_FAILED -> {
