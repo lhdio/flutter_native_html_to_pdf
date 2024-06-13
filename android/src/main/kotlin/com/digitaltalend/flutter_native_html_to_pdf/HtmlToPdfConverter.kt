@@ -3,15 +3,13 @@ package com.digitaltalend.flutter_native_html_to_pdf
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.os.CancellationSignal
-import android.os.ParcelFileDescriptor
-import android.print.PageRange
+import android.print.PdfPrinter
 import android.print.PrintAttributes
-import android.print.PrintDocumentAdapter
-import android.print.PrintDocumentInfo
 import android.webkit.WebView
 import android.webkit.WebViewClient
+
 import java.io.File
+
 
 class HtmlToPdfConverter {
 
@@ -36,40 +34,31 @@ class HtmlToPdfConverter {
         }
     }
 
-    private fun createPdfFromWebView(webView: WebView, applicationContext: Context, callback: Callback) {
+    fun createPdfFromWebView(webView: WebView, applicationContext: Context, callback: Callback) {
         val path = applicationContext.filesDir
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            val printAttributes = PrintAttributes.Builder()
-                .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
-                .setResolution(PrintAttributes.Resolution("pdf", "pdf", 600, 600))
-                .setMinMargins(PrintAttributes.Margins.NO_MARGINS)
-                .build()
 
-            val printAdapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
+            val attributes = PrintAttributes.Builder()
+                    .setMediaSize(PrintAttributes.MediaSize.UNKNOWN_PORTRAIT)
+                    .setResolution(PrintAttributes.Resolution("pdf", "pdf", 600, 600))
+                    .setMinMargins(PrintAttributes.Margins.NO_MARGINS).build()
 
-            // Use anonymous inner classes or lambda expressions
-            printAdapter.onLayout(null, printAttributes, null,
-                object : PrintDocumentAdapter.LayoutResultCallback() {
-                    override fun onLayoutFinished(info: PrintDocumentInfo, changed: Boolean) {
-                        printAdapter.onWrite(arrayOf(PageRange.ALL_PAGES), getOutputFile(path, temporaryFileName), CancellationSignal(),
-                            object : PrintDocumentAdapter.WriteResultCallback() {
-                                override fun onWriteFinished(pages: Array<PageRange>) {
-                                    if (pages.isNotEmpty()) {
-                                        val filePath = File(path, temporaryFileName).absolutePath
-                                        callback.onSuccess(filePath)
-                                    } else {
-                                        callback.onFailure()
-                                    }
-                                }
-                            })
+            val printer = PdfPrinter(attributes)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                val adapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
+
+                printer.print(adapter, path, temporaryFileName, object : PdfPrinter.Callback {
+                    override fun onSuccess(filePath: String) {
+                        callback.onSuccess(filePath)
                     }
-                }, null)
-        }
-    }
 
-    private fun getOutputFile(path: File, fileName: String): ParcelFileDescriptor {
-        val file = File(path, fileName)
-        return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_WRITE)
+                    override fun onFailure() {
+                        callback.onFailure()
+                    }
+                })
+            }
+        }
     }
 
     companion object {
