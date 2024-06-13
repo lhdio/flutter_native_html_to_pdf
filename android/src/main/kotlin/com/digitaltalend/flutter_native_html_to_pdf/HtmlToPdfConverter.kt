@@ -41,14 +41,14 @@ fun createPdfFromWebView(webView: WebView, applicationContext: Context, callback
         val printDocumentAdapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
 
         printDocumentAdapter.onLayout(null, null, null, object : PrintDocumentAdapter.LayoutResultCallback() {
-            override fun onLayoutFinished(info: PrintDocumentInfo?, changed: Boolean) {
+            override fun onLayoutFinished(info: PrintDocumentInfo, changed: Boolean) {
                 printDocumentAdapter.onWrite(
                     arrayOf(PageRange.ALL_PAGES),
                     getOutputFile(path, temporaryFileName),
                     null,
                     object : PrintDocumentAdapter.WriteResultCallback() {
-                        override fun onWriteFinished(pages: Array<PageRange>?) {
-                            if (pages != null && pages.isNotEmpty()) {
+                        override fun onWriteFinished(pages: Array<PageRange>) {
+                            if (pages.isNotEmpty()) {
                                 val filePath = File(path, temporaryFileName).absolutePath
                                 callback.onSuccess(filePath)
                             } else {
@@ -59,6 +59,11 @@ fun createPdfFromWebView(webView: WebView, applicationContext: Context, callback
             }
         }, null)
     }
+}
+
+private fun getOutputFile(path: File, fileName: String): ParcelFileDescriptor {
+    val file = File(path, fileName)
+    return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_WRITE)
 }
     companion object {
         const val temporaryDocumentName = "TemporaryDocumentName"
