@@ -1,3 +1,5 @@
+// android/build.gradle
+
 group 'com.digitaltalend.flutter_native_html_to_pdf'
 version '1.0-SNAPSHOT'
 
@@ -52,6 +54,9 @@ android {
     dependencies {
         testImplementation 'org.jetbrains.kotlin:kotlin-test'
         testImplementation 'org.mockito:mockito-core:5.0.0'
+
+        // Add this dependency for the Print API
+        implementation("androidx.print:print:1.0.0") // Or the latest version
     }
 
     testOptions {
