@@ -7,6 +7,7 @@ import android.print.PdfPrinter
 import android.print.PrintAttributes
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.print.PrintHelper.ORIENTATION_LANDSCAPE
 
 import java.io.File
 
@@ -36,29 +37,26 @@ class HtmlToPdfConverter {
 
     fun createPdfFromWebView(webView: WebView, applicationContext: Context, callback: Callback) {
         val path = applicationContext.filesDir
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 
-            val attributes = PrintAttributes.Builder()
-                    .setMediaSize(PrintAttributes.MediaSize.UNKNOWN_PORTRAIT)
-                    .setResolution(PrintAttributes.Resolution("pdf", "pdf", 600, 600))
-                    .setMinMargins(PrintAttributes.Margins.NO_MARGINS).build()
+        val attributes = PrintAttributes.Builder()
+                .setMediaSize(PrintAttributes.MediaSize.UNKNOWN_PORTRAIT)
+                .setMinMargins(PrintAttributes.Margins.NO_MARGINS).build()
 
-            val printer = PdfPrinter(attributes)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val adapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
 
-                printer.print(adapter, path, temporaryFileName, object : PdfPrinter.Callback {
-                    override fun onSuccess(filePath: String) {
-                        callback.onSuccess(filePath)
-                    }
+        val printer = PdfPrinter(attributes)
 
-                    override fun onFailure() {
-                        callback.onFailure()
-                    }
-                })
+        val adapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
+
+        printer.print(adapter, path, temporaryFileName, object : PdfPrinter.Callback {
+            override fun onSuccess(filePath: String) {
+                callback.onSuccess(filePath)
             }
-        }
+
+            override fun onFailure() {
+                callback.onFailure()
+            }
+        })
     }
 
     companion object {
