@@ -1,5 +1,3 @@
-// android/src/main/kotlin/com/digitaltalend/flutter_native_html_to_pdf/HtmlToPdfConverter.kt
-
 package com.digitaltalend.flutter_native_html_to_pdf
 
 import android.annotation.SuppressLint
@@ -49,20 +47,23 @@ class HtmlToPdfConverter {
 
             val printAdapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
 
-            printAdapter.onLayout(null, printAttributes, null, object : PrintDocumentAdapter.LayoutResultCallback() {
-                override fun onLayoutFinished(info: PrintDocumentInfo, changed: Boolean) {
-                    printAdapter.onWrite(arrayOf(PageRange.ALL_PAGES), getOutputFile(path, temporaryFileName), CancellationSignal(), object : PrintDocumentAdapter.WriteResultCallback() {
-                        override fun onWriteFinished(pages: Array<PageRange>) {
-                            if (pages.isNotEmpty()) {
-                                val filePath = File(path, temporaryFileName).absolutePath
-                                callback.onSuccess(filePath)
-                            } else {
-                                callback.onFailure()
-                            }
-                        }
-                    })
-                }
-            }, null)
+            // Use anonymous inner classes or lambda expressions
+            printAdapter.onLayout(null, printAttributes, null,
+                object : PrintDocumentAdapter.LayoutResultCallback() {
+                    override fun onLayoutFinished(info: PrintDocumentInfo, changed: Boolean) {
+                        printAdapter.onWrite(arrayOf(PageRange.ALL_PAGES), getOutputFile(path, temporaryFileName), CancellationSignal(),
+                            object : PrintDocumentAdapter.WriteResultCallback() {
+                                override fun onWriteFinished(pages: Array<PageRange>) {
+                                    if (pages.isNotEmpty()) {
+                                        val filePath = File(path, temporaryFileName).absolutePath
+                                        callback.onSuccess(filePath)
+                                    } else {
+                                        callback.onFailure()
+                                    }
+                                }
+                            })
+                    }
+                }, null)
         }
     }
 
