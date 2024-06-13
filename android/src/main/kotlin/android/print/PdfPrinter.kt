@@ -23,7 +23,8 @@ class PdfPrinter(private val printAttributes: PrintAttributes) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             printAdapter.onLayout(
                 null,
-                printAttributes,
+                // قم بإزالة printAttributes
+                null, 
                 null,
                 object : PrintDocumentAdapter.LayoutResultCallback() {
 
