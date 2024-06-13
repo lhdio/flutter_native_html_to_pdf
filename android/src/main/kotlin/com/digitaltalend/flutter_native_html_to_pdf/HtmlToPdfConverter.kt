@@ -45,14 +45,14 @@ class HtmlToPdfConverter {
                 null,
                 null,
                 object : PrintDocumentAdapter.LayoutResultCallback() {
-                    override fun onLayoutFinished(info: PrintDocumentInfo, changed: Boolean) {
+                    override fun onLayoutFinished(info: PrintDocumentInfo?, changed: Boolean) {
                         printDocumentAdapter.onWrite(
                             arrayOf(PageRange.ALL_PAGES),
                             getOutputFile(path, temporaryFileName),
                             null,
                             object : PrintDocumentAdapter.WriteResultCallback() {
-                                override fun onWriteFinished(pages: Array<PageRange>) {
-                                    if (pages.isNotEmpty()) {
+                                override fun onWriteFinished(pages: Array<PageRange>?) {
+                                    if (pages != null && pages.isNotEmpty()) {
                                         val filePath = File(path, temporaryFileName).absolutePath
                                         callback.onSuccess(filePath)
                                     } else {
