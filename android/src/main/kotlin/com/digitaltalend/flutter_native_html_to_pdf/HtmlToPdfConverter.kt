@@ -35,31 +35,31 @@ class HtmlToPdfConverter {
     }
 
     fun createPdfFromWebView(webView: WebView, applicationContext: Context, callback: Callback) {
-        val path = applicationContext.filesDir
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+    val path = applicationContext.filesDir
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 
-            val attributes = PrintAttributes.Builder()
-                .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
-                .setResolution(PrintAttributes.Resolution("pdf", "pdf", 600, 600))
-                .setMinMargins(PrintAttributes.Margins.NO_MARGINS).build()
+        val attributes = PrintAttributes.Builder()
+            .setMediaSize(PrintAttributes.MediaSize.UNKNOWN_PORTRAIT)
+            .setResolution(PrintAttributes.Resolution("pdf", "pdf", 600, 600))
+            .setMinMargins(PrintAttributes.Margins.NO_MARGINS).build()
 
-            val printer = PdfPrinter(attributes)
+        val printer = PdfPrinter(attributes)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val adapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val adapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
 
-                printer.print(adapter, path, temporaryFileName, object : PdfPrinter.Callback {
-                    override fun onSuccess(filePath: String) {
-                        callback.onSuccess(filePath)
-                    }
+            printer.print(adapter, path, temporaryFileName, object : PdfPrinter.Callback {
+                override fun onSuccess(filePath: String) {
+                    callback.onSuccess(filePath)
+                }
 
-                    override fun onFailure() {
-                        callback.onFailure()
-                    }
-                })
-            }
+                override fun onFailure() {
+                    callback.onFailure()
+                }
+            })
         }
     }
+}
 
     companion object {
         const val temporaryDocumentName = "TemporaryDocumentName"
