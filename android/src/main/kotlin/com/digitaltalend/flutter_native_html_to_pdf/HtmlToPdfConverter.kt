@@ -38,38 +38,26 @@ fun createPdfFromWebView(webView: WebView, applicationContext: Context, callback
     val path = applicationContext.filesDir
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 
-        val printManager = applicationContext.getSystemService(Context.PRINT_SERVICE) as android.print.PrintManager
+        val printDocumentAdapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
 
-        val printAdapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
-
-        val printAttributes = PrintAttributes.Builder()
-            .setMediaSize(PrintAttributes.MediaSize.UNKNOWN_PORTRAIT)
-            .setResolution(PrintAttributes.Resolution("pdf", "pdf", 600, 600))
-            .setMinMargins(PrintAttributes.Margins.NO_MARGINS)
-            .build()
-
-        val pdfPrintAttrs = android.print.PrintAttributes.Builder()
-            .setMediaSize(android.print.PrintAttributes.MediaSize.UNKNOWN_PORTRAIT)
-            .setResolution(android.print.PrintAttributes.Resolution("pdf", "pdf", 600, 600))
-            .setMinMargins(android.print.PrintAttributes.Margins.NO_MARGINS)
-            .build()
-
-        val printJob = printManager.print(temporaryDocumentName, printAdapter, pdfPrintAttrs)
-
-        printJob.addPrintJobStateChangeListener(object : android.print.PrintJobStateChangeListener() {
-            override fun onPrintJobStateChanged(printJobId: android.print.PrintJobId) {
-                val job = printManager.getPrintJob(printJobId)
-                when (job?.info?.state) {
-                    android.print.PrintJobInfo.STATE_COMPLETED -> {
-                        val filePath = "${path.absolutePath}/${job.info.label}"
-                        callback.onSuccess(filePath)
-                    }
-                    android.print.PrintJobInfo.STATE_FAILED -> {
-                        callback.onFailure()
-                    }
-                }
+        printDocumentAdapter.onLayout(null, null, null, object : PrintDocumentAdapter.LayoutResultCallback() {
+            override fun onLayoutFinished(info: PrintDocumentInfo?, changed: Boolean) {
+                printDocumentAdapter.onWrite(
+                    arrayOf(PageRange.ALL_PAGES),
+                    getOutputFile(path, temporaryFileName),
+                    null,
+                    object : PrintDocumentAdapter.WriteResultCallback() {
+                        override fun onWriteFinished(pages: Array<PageRange>?) {
+                            if (pages != null && pages.isNotEmpty()) {
+                                val filePath = File(path, temporaryFileName).absolutePath
+                                callback.onSuccess(filePath)
+                            } else {
+                                callback.onFailure()
+                            }
+                        }
+                    })
             }
-        })
+        }, null)
     }
 }
     companion object {

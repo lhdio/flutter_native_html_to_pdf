@@ -56,12 +56,6 @@ class PdfPrinter(private val printAttributes: PrintAttributes) {
 
 
 private fun getOutputFile(path: File, fileName: String): ParcelFileDescriptor {
-    if (!path.exists()) {
-        path.mkdirs()
-    }
-
-    File(path, fileName).let {
-        it.createNewFile()
-        return ParcelFileDescriptor.open(it, ParcelFileDescriptor.MODE_READ_WRITE)
-    }
+    val file = File(path, fileName)
+    return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_WRITE)
 }
