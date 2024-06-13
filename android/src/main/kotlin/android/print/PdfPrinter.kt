@@ -12,7 +12,6 @@ class PdfPrinter(private val printAttributes: PrintAttributes) {
         fun onFailure()
     }
 
-
     fun print(
         printAdapter: PrintDocumentAdapter,
         path: File,
@@ -23,8 +22,7 @@ class PdfPrinter(private val printAttributes: PrintAttributes) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             printAdapter.onLayout(
                 null,
-                // قم بإزالة printAttributes
-                null, 
+                printAttributes,
                 null,
                 object : PrintDocumentAdapter.LayoutResultCallback() {
 
