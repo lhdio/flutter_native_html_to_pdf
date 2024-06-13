@@ -6,8 +6,8 @@ import android.os.Build
 import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
 import android.print.PageRange
+import android.print.PrintAttributes
 import android.print.PrintDocumentAdapter
-import android.print.PrintDocumentInfo
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import java.io.File
@@ -38,32 +38,27 @@ class HtmlToPdfConverter {
     private fun createPdfFromWebView(webView: WebView, applicationContext: Context, callback: Callback) {
         val path = applicationContext.filesDir
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            val printDocumentAdapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
+            val printAttributes = PrintAttributes.Builder()
+                .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
+                .setResolution(PrintAttributes.Resolution("pdf", "pdf", 600, 600))
+                .setMinMargins(PrintAttributes.Margins.NO_MARGINS)
+                .build()
 
-            printDocumentAdapter.onLayout(
-                null,
-                null,
-                null,
-                object : PrintDocumentAdapter.LayoutResultCallback() {
-                    override fun onLayoutFinished(info: PrintDocumentInfo, changed: Boolean) {
-                        printDocumentAdapter.onWrite(
-                            arrayOf(PageRange.ALL_PAGES),
-                            getOutputFile(path, temporaryFileName),
-                            CancellationSignal(),
-                            object : PrintDocumentAdapter.WriteResultCallback() {
-                                override fun onWriteFinished(pages: Array<PageRange>) {
-                                    if (pages.isNotEmpty()) {
-                                        val filePath = File(path, temporaryFileName).absolutePath
-                                        callback.onSuccess(filePath)
-                                    } else {
-                                        callback.onFailure()
-                                    }
-                                }
-                            })
-                    }
-                },
-                null
-            )
+            val printAdapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
+            printAdapter.onLayout(null, printAttributes, null, object : PrintDocumentAdapter.LayoutResultCallback() {
+                override fun onLayoutFinished(info: PrintDocumentInfo?, changed: Boolean) {
+                    printAdapter.onWrite(arrayOf(PageRange.ALL_PAGES), getOutputFile(path, temporaryFileName), CancellationSignal(), object : PrintDocumentAdapter.WriteResultCallback() {
+                        override fun onWriteFinished(pages: Array<PageRange>?) {
+                            if (pages != null && pages.isNotEmpty()) {
+                                val filePath = File(path, temporaryFileName).absolutePath
+                                callback.onSuccess(filePath)
+                            } else {
+                                callback.onFailure()
+                            }
+                        }
+                    })
+                }
+            }, null)
         }
     }
 
