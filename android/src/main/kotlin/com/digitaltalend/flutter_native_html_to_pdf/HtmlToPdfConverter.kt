@@ -8,6 +8,7 @@ import android.os.ParcelFileDescriptor
 import android.print.PageRange
 import android.print.PrintAttributes
 import android.print.PrintDocumentAdapter
+import android.print.PrintDocumentInfo
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import java.io.File
@@ -46,10 +47,10 @@ class HtmlToPdfConverter {
 
             val printAdapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
             printAdapter.onLayout(null, printAttributes, null, object : PrintDocumentAdapter.LayoutResultCallback() {
-                override fun onLayoutFinished(info: PrintDocumentInfo?, changed: Boolean) {
+                override fun onLayoutFinished(info: PrintDocumentInfo, changed: Boolean) {
                     printAdapter.onWrite(arrayOf(PageRange.ALL_PAGES), getOutputFile(path, temporaryFileName), CancellationSignal(), object : PrintDocumentAdapter.WriteResultCallback() {
-                        override fun onWriteFinished(pages: Array<PageRange>?) {
-                            if (pages != null && pages.isNotEmpty()) {
+                        override fun onWriteFinished(pages: Array<PageRange>) {
+                            if (pages.isNotEmpty()) {
                                 val filePath = File(path, temporaryFileName).absolutePath
                                 callback.onSuccess(filePath)
                             } else {
