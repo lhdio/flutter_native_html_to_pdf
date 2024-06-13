@@ -46,15 +46,15 @@ class FlutterNativeHtmlToPdfPlugin: FlutterPlugin, MethodCallHandler {
     val htmlFilePath = call.argument<String>("htmlFilePath")
 
     HtmlToPdfConverter().convert(htmlFilePath!!, context, object : HtmlToPdfConverter.Callback {
-        override fun onSuccess(filePath: String) {
-            result.success(filePath)
-        }
+      override fun onSuccess(filePath: String) {
+        result.success(filePath)
+      }
 
-        override fun onFailure() {
-            result.error("ERROR", "Unable to convert html to pdf document!", "")
-        }
+      override fun onFailure() {
+        result.error("ERROR", "Unable to convert html to pdf document!", "")
+      }
     })
-}
+  }
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     channel.setMethodCallHandler(null)
   }

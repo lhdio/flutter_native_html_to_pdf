@@ -35,28 +35,31 @@ class HtmlToPdfConverter {
     }
 
     fun createPdfFromWebView(webView: WebView, applicationContext: Context, callback: Callback) {
-    val path = applicationContext.filesDir
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-        // أعد  PrintAttributes
-        val attributes = PrintAttributes.Builder().build()  //  بدون  `setMediaSize`  
+        val path = applicationContext.filesDir
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 
-        val printer = PdfPrinter(attributes)
+            val attributes = PrintAttributes.Builder()
+                .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
+                .setResolution(PrintAttributes.Resolution("pdf", "pdf", 600, 600))
+                .setMinMargins(PrintAttributes.Margins.NO_MARGINS).build()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val adapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
+            val printer = PdfPrinter(attributes)
 
-            printer.print(adapter, path, temporaryFileName, object : PdfPrinter.Callback {
-                override fun onSuccess(filePath: String) {
-                    callback.onSuccess(filePath)
-                }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                val adapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
 
-                override fun onFailure() {
-                    callback.onFailure()
-                }
-            })
+                printer.print(adapter, path, temporaryFileName, object : PdfPrinter.Callback {
+                    override fun onSuccess(filePath: String) {
+                        callback.onSuccess(filePath)
+                    }
+
+                    override fun onFailure() {
+                        callback.onFailure()
+                    }
+                })
+            }
         }
     }
-}
 
     companion object {
         const val temporaryDocumentName = "TemporaryDocumentName"

@@ -12,6 +12,7 @@ class PdfPrinter(private val printAttributes: PrintAttributes) {
         fun onFailure()
     }
 
+
     fun print(
         printAdapter: PrintDocumentAdapter,
         path: File,
