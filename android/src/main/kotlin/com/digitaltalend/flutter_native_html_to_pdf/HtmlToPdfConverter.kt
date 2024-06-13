@@ -34,33 +34,43 @@ class HtmlToPdfConverter {
         }
     }
 
-    fun createPdfFromWebView(webView: WebView, applicationContext: Context, callback: Callback) {
-        val path = applicationContext.filesDir
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+fun createPdfFromWebView(webView: WebView, applicationContext: Context, callback: Callback) {
+    val path = applicationContext.filesDir
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 
-            val attributes = PrintAttributes.Builder()
-                .setMediaSize(PrintAttributes.MediaSize.UNKNOWN_PORTRAIT)
-                .setResolution(PrintAttributes.Resolution("pdf", "pdf", 600, 600))
-                .setMinMargins(PrintAttributes.Margins.NO_MARGINS).build()
+        val printManager = applicationContext.getSystemService(Context.PRINT_SERVICE) as android.print.PrintManager
 
-            val printer = PdfPrinter(attributes)
+        val printAdapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                val adapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
+        val printAttributes = PrintAttributes.Builder()
+            .setMediaSize(PrintAttributes.MediaSize.UNKNOWN_PORTRAIT)
+            .setResolution(PrintAttributes.Resolution("pdf", "pdf", 600, 600))
+            .setMinMargins(PrintAttributes.Margins.NO_MARGINS)
+            .build()
 
-                printer.print(adapter, path, temporaryFileName, object : PdfPrinter.Callback {
-                    override fun onSuccess(filePath: String) {
+        val pdfPrintAttrs = android.print.PrintAttributes.Builder()
+            .setMediaSize(android.print.PrintAttributes.MediaSize.UNKNOWN_PORTRAIT)
+            .setResolution(android.print.PrintAttributes.Resolution("pdf", "pdf", 600, 600))
+            .setMinMargins(android.print.PrintAttributes.Margins.NO_MARGINS)
+            .build()
+
+        val printJob = printManager.print(temporaryDocumentName, printAdapter, pdfPrintAttrs)
+
+        printJob.setCompleted(object : android.print.PrintJob.PrintJobStateChangeListener() {
+            override fun onPrintJobStateChanged(printJob: android.print.PrintJob) {
+                when (printJob.info.state) {
+                    android.print.PrintJobInfo.STATE_COMPLETED -> {
+                        val filePath = "${path.absolutePath}/${printJob.info.label}"
                         callback.onSuccess(filePath)
                     }
-
-                    override fun onFailure() {
+                    android.print.PrintJobInfo.STATE_FAILED -> {
                         callback.onFailure()
                     }
-                })
+                }
             }
-        }
+        })
     }
-
+}
     companion object {
         const val temporaryDocumentName = "TemporaryDocumentName"
         const val temporaryFileName = "TemporaryDocumentFile.pdf"
