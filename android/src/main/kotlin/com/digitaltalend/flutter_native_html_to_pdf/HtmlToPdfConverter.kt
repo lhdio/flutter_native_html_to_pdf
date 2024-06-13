@@ -46,6 +46,7 @@ class HtmlToPdfConverter {
                 .build()
 
             val printAdapter = webView.createPrintDocumentAdapter(temporaryDocumentName)
+
             printAdapter.onLayout(null, printAttributes, null, object : PrintDocumentAdapter.LayoutResultCallback() {
                 override fun onLayoutFinished(info: PrintDocumentInfo, changed: Boolean) {
                     printAdapter.onWrite(arrayOf(PageRange.ALL_PAGES), getOutputFile(path, temporaryFileName), CancellationSignal(), object : PrintDocumentAdapter.WriteResultCallback() {
