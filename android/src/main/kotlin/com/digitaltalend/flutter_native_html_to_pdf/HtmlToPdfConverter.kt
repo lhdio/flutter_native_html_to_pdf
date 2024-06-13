@@ -3,9 +3,9 @@ package com.digitaltalend.flutter_native_html_to_pdf
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
 import android.print.PageRange
-import android.print.PrintAttributes
 import android.print.PrintDocumentAdapter
 import android.print.PrintDocumentInfo
 import android.webkit.WebView
@@ -45,14 +45,14 @@ class HtmlToPdfConverter {
                 null,
                 null,
                 object : PrintDocumentAdapter.LayoutResultCallback() {
-                    override fun onLayoutFinished(info: PrintDocumentInfo?, changed: Boolean) {
+                    override fun onLayoutFinished(info: PrintDocumentInfo, changed: Boolean) {
                         printDocumentAdapter.onWrite(
                             arrayOf(PageRange.ALL_PAGES),
                             getOutputFile(path, temporaryFileName),
-                            null,
+                            CancellationSignal(),
                             object : PrintDocumentAdapter.WriteResultCallback() {
-                                override fun onWriteFinished(pages: Array<PageRange>?) {
-                                    if (pages != null && pages.isNotEmpty()) {
+                                override fun onWriteFinished(pages: Array<PageRange>) {
+                                    if (pages.isNotEmpty()) {
                                         val filePath = File(path, temporaryFileName).absolutePath
                                         callback.onSuccess(filePath)
                                     } else {
