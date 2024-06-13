@@ -12,14 +12,12 @@ class PdfPrinter(private val printAttributes: PrintAttributes) {
         fun onFailure()
     }
 
-
     fun print(
         printAdapter: PrintDocumentAdapter,
         path: File,
         fileName: String,
         callback: Callback
     ) {
-        // Support for min API 16 is required
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             printAdapter.onLayout(
                 null,
@@ -28,7 +26,8 @@ class PdfPrinter(private val printAttributes: PrintAttributes) {
                 object : PrintDocumentAdapter.LayoutResultCallback() {
 
                     override fun onLayoutFinished(info: PrintDocumentInfo, changed: Boolean) {
-                        printAdapter.onWrite(arrayOf(PageRange.ALL_PAGES),
+                        printAdapter.onWrite(
+                            arrayOf(PageRange.ALL_PAGES),
                             getOutputFile(path, fileName),
                             CancellationSignal(),
                             object : PrintDocumentAdapter.WriteResultCallback() {
@@ -43,7 +42,6 @@ class PdfPrinter(private val printAttributes: PrintAttributes) {
                                     File(path, fileName).let {
                                         callback.onSuccess(it.absolutePath)
                                     }
-
                                 }
                             })
                     }
@@ -54,8 +52,8 @@ class PdfPrinter(private val printAttributes: PrintAttributes) {
     }
 }
 
-
 private fun getOutputFile(path: File, fileName: String): ParcelFileDescriptor {
     val file = File(path, fileName)
     return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_WRITE)
 }
+
