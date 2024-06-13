@@ -34,7 +34,9 @@ class HtmlToPdfConverter {
         }
     }
 
-    fun createPdfFromWebView(webView: WebView, applicationContext: Context, callback: Callback) {
+ fun createPdfFromWebView(webView: WebView, applicationContext: Context, callback: Callback) {
+    println("Using the latest version of flutter_native_html_to_pdf library")
+    
     val path = applicationContext.filesDir
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 
